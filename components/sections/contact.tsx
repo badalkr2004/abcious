@@ -18,7 +18,9 @@ export function Contact() {
     setErrors({});
     setMessage("");
 
-    const form = new FormData(e.currentTarget);
+    // Capture before await — React nulls event.currentTarget after the handler yields
+    const formEl = e.currentTarget;
+    const form = new FormData(formEl);
     const payload = {
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
@@ -42,9 +44,9 @@ export function Contact() {
       }
 
       track("form_submit", { form: "contact" });
+      formEl.reset();
       setStatus("success");
       setMessage("Thanks — we’ll reply within two business days.");
-      e.currentTarget.reset();
     } catch {
       setStatus("error");
       setMessage("Network error. Email us directly instead.");
